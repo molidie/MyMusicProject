@@ -82,31 +82,51 @@ public class PlaylistResource {
     }
     @POST
     @Path("/{id}/songs")
-    @Transactional //para la list del ManyToMany
+    @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     public Response addSong(@PathParam("id") Long idP, @RequestBody Map<String, Object> requestBody) {
         Integer songId = (Integer) requestBody.get("songId");
         Long songIdLong = songId.longValue();
 
+
         Playlist playlist = playlistRepository.findById(idP).orElse(null);
         if (playlist == null) {
-            //playlist no encontrada
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+
+
         Song song = songService.getSongId(songIdLong);
+        //Existe la cancion?
         if (song == null) {
-            //canción no encontrada
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("La canción con la ID " + songIdLong + " no existe.")
+                    .build(); // Canción no encontrada
         }
-        List<Song> songList = playlist.getSongs();
-        songList.add(song);
+
+        // Existe la cancion en la lista?
+        if (playlist.getSongs().contains(song)) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("La canción ya está en la lista de reproducción.")
+                    .build(); // La canción ya está en la lista de reproducción
+        }
+
+        // Agrega la cancion a la lsita
+        playlist.getSongs().add(song);
         playlistRepository.save(playlist);
 
+        // Mapear y devolver la respuesta
+        PlaylistDTO playlistDto = mapPlaylistToDTO(playlist);
+        return Response.ok(playlistDto).build();
+    }
+
+    private PlaylistDTO mapPlaylistToDTO(Playlist playlist) {
         ModelMapper modelMapper = new ModelMapper();
         PlaylistDTO playlistDto = modelMapper.map(playlist, PlaylistDTO.class);
         playlistDto.setCantidadDeCanciones(playlist.getSongs().size());
-
-        return Response.ok(playlistDto).build(); //cambiar el retorno a songDto
+        return playlistDto;
     }
+
+
+
 
 }
