@@ -85,32 +85,31 @@ public class PlaylistResource {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     public Response addSong(@PathParam("id") Long idP, @RequestBody Map<String, Object> requestBody) {
+        Playlist playlist = playlistRepository.findById(idP).orElse(null);
+        if (playlist == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("La playlist con la ID " + idP + " no existe.")
+                    .build(); // Playlist no encontrada
+        }
+
         Integer songId = (Integer) requestBody.get("songId");
         Long songIdLong = songId.longValue();
 
-
-        Playlist playlist = playlistRepository.findById(idP).orElse(null);
-        if (playlist == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
-
         Song song = songService.getSongId(songIdLong);
-        //Existe la cancion?
         if (song == null) {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("La canción con la ID " + songIdLong + " no existe.")
                     .build(); // Canción no encontrada
         }
 
-        // Existe la cancion en la lista?
+        // Verificar si la canción ya está en la lista de reproducción
         if (playlist.getSongs().contains(song)) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("La canción ya está en la lista de reproducción.")
                     .build(); // La canción ya está en la lista de reproducción
         }
 
-        // Agrega la cancion a la lsita
+        // Agregar la canción a la lista de reproducción
         playlist.getSongs().add(song);
         playlistRepository.save(playlist);
 
