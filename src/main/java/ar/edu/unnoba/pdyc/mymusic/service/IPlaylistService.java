@@ -10,7 +10,6 @@ public interface  IPlaylistService {
     public Playlist create (Playlist playlist);
     public void delete (Long id);
     public List<Playlist> findAll();
-    Playlist addSongToPlaylist(Long playlistId, Long songId);
 }
 
 

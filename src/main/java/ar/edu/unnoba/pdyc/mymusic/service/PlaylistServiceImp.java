@@ -34,16 +34,4 @@ public class PlaylistServiceImp implements IPlaylistService {
             return playlistRepository.findAll();
     }
 
-    @Override
-    public Playlist addSongToPlaylist(Long playlistId, Long songId) {
-        Playlist playlist = playlistRepository.findById(playlistId)
-                .orElseThrow(() -> new NotFoundException("Playlist not found"));
-
-        Song song = songRepository.findById(songId)
-                .orElseThrow(() -> new NotFoundException("Song not found"));
-
-        playlist.getSongs().add(song);
-        return playlistRepository.save(playlist);
-    }
-
 }
