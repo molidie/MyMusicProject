@@ -1,5 +1,6 @@
 
 package ar.edu.unnoba.pdyc.mymusic.resources;
+import ar.edu.unnoba.pdyc.mymusic.dto.SongDTO;
 import ar.edu.unnoba.pdyc.mymusic.model.Playlist;
 import ar.edu.unnoba.pdyc.mymusic.model.Song;
 import ar.edu.unnoba.pdyc.mymusic.repository.PlaylistRepository;
@@ -34,18 +35,18 @@ import java.util.Map;
 @Path("/playlists")
 public class PlaylistResource {
 
-    private final PlaylistServiceImp playlistService;
-    @Autowired
+    private PlaylistServiceImp playlistService;
     private SongServiceImp songService;
+    private ModelMapper modelMapper;
 
-    private  ModelMapper modelMapper;
-
+    @Autowired
     private PlaylistRepository playlistRepository;
 
-
     @Autowired
-    public PlaylistResource(PlaylistServiceImp playlistService) {
+    public PlaylistResource(PlaylistServiceImp playlistService, SongServiceImp songService) {
         this.playlistService = playlistService;
+        this.songService = songService;
+        this.modelMapper = new ModelMapper();
     }
 
     @GET
@@ -80,31 +81,32 @@ public class PlaylistResource {
         return Response.ok(playlistDto).build();
     }
     @POST
-    @Path("/{idP}/songs")
-    @Transactional
+    @Path("/{id}/songs")
+    @Transactional //para la list del ManyToMany
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addSong(@PathParam("idP") Long idP, @RequestBody Map<String, Object> requestBody) {
+    public Response addSong(@PathParam("id") Long idP, @RequestBody Map<String, Object> requestBody) {
         Integer songId = (Integer) requestBody.get("songId");
         Long songIdLong = songId.longValue();
 
         Playlist playlist = playlistRepository.findById(idP).orElse(null);
         if (playlist == null) {
+            //playlist no encontrada
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-
         Song song = songService.getSongId(songIdLong);
         if (song == null) {
+            //canción no encontrada
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        playlist.getSongs().add(song);
+        List<Song> songList = playlist.getSongs();
+        songList.add(song);
         playlistRepository.save(playlist);
 
-        PlaylistDTO playlistDto = new ModelMapper().map(playlist, PlaylistDTO.class);
+        ModelMapper modelMapper = new ModelMapper();
+        PlaylistDTO playlistDto = modelMapper.map(playlist, PlaylistDTO.class);
         playlistDto.setCantidadDeCanciones(playlist.getSongs().size());
 
-        return Response.ok(playlistDto).build(); // Cambiar el retorno a songDto
+        return Response.ok(playlistDto).build(); //cambiar el retorno a songDto
     }
-
-
 
 }
