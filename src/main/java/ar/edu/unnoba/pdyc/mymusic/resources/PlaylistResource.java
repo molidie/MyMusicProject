@@ -44,12 +44,9 @@ public class PlaylistResource {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPlaylists() {
-        ModelMapper modelMapper = new ModelMapper();
         List<Playlist> playlists = playlistService.findAll();
         List<PlaylistDTO> playlistDtos = playlists.stream().map(playlist -> {
             PlaylistDTO playlistDto = modelMapper.map(playlist, PlaylistDTO.class);
-            playlistDto.setId(playlist.getId());
-            playlistDto.setName(playlist.getName());
             int songSize = playlist.getSongs().size();
             playlistDto.setCantidadDeCanciones(songSize);
 
@@ -62,17 +59,11 @@ public class PlaylistResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createPlaylist(@RequestBody PlaylistDTO playlistDto){
-        ModelMapper modelMapper = new ModelMapper();
+    public Response createPlaylist(@RequestBody PlaylistDTO playlistDto) {
         Playlist playlist = modelMapper.map(playlistDto, Playlist.class);
-        playlistService.create(playlist);
-        playlistDto = modelMapper.map(playlist, PlaylistDTO.class);
-        playlistDto.setName(playlist.getName());
-        playlistDto.setId(playlist.getId());
-        return Response.ok(playlistDto).build();
+        Playlist createdPlaylist = playlistService.create(playlist);
+        return Response.ok(modelMapper.map(createdPlaylist, PlaylistDTO.class)).build();
     }
-
-
 
     @POST
     @Path("/{id}/songs")
@@ -110,6 +101,8 @@ public class PlaylistResource {
         PlaylistDTO playlistDto = mapPlaylistToDTO(playlist);
         return Response.ok(playlistDto).build();
     }
+    
+
 
     private PlaylistDTO mapPlaylistToDTO(Playlist playlist) {
         ModelMapper modelMapper = new ModelMapper();
