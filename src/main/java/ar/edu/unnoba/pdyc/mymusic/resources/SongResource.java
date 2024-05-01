@@ -29,17 +29,13 @@ public class SongResource {
 
     @Autowired
     private ISongService songService;
+    private ModelMapper modelMapper = new ModelMapper();
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSongs() {
-        ModelMapper modelMapper = new ModelMapper();
         List<SongDTO> songDtos = songService.findAll().stream().map(song -> {
             SongDTO songDto = modelMapper.map(song, SongDTO.class);
-            songDto.setId(song.getId());
-            songDto.setName(song.getName());
-            songDto.setAuthor(song.getAuthor());
-            songDto.setGenre(song.getGenre());
             return songDto;
         }).toList();
         return Response.ok(songDtos).build();
@@ -49,12 +45,8 @@ public class SongResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createSong(@RequestBody SongDTO songDto) {
-        ModelMapper modelMapper = new ModelMapper();
         Song song = modelMapper.map(songDto, Song.class);
-        song.setAuthor(songDto.getAuthor());
-        song.setGenre(songDto.getGenre());
-        song.setName(songDto.getName());
-        songService.create(song);
-        return  Response.ok(songDto).build();
+        Song createdSong = songService.create(song);
+        return  Response.ok(modelMapper.map(createdSong, SongDTO.class)).build();
     }
 }
