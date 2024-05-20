@@ -49,7 +49,7 @@ public class PlaylistServiceImp implements IPlaylistService {
         List<PlaylistDTO> playlistDtos = playlists.stream().map(playlist -> {
             PlaylistDTO playlistDto = modelMapper.map(playlist, PlaylistDTO.class);
             int songSize = playlist.getSongs().size();
-            playlistDto.setCantidadDeCanciones(songSize);
+            playlistDto.setAssociatedSongs(songSize);
             return playlistDto;
         }).toList();
         return Response.ok(playlistDtos).build();
@@ -107,7 +107,7 @@ public class PlaylistServiceImp implements IPlaylistService {
 
         // Mapear y devolver la respuesta
         PlaylistDTO playlistDto = modelMapper.map(playlist, PlaylistDTO.class);
-        playlistDto.setCantidadDeCanciones(playlist.getSongs().size());
+        playlistDto.setAssociatedSongs(playlist.getSongs().size());
         return Response.ok(modelMapper.map(playlistDto, PlaylistDTO.class)).build();
     }
     @Override
@@ -131,7 +131,7 @@ public class PlaylistServiceImp implements IPlaylistService {
 
         // Mapear y devolver la respuesta
         PlaylistDTO playlistDto = modelMapper.map(playlist, PlaylistDTO.class);
-        playlistDto.setCantidadDeCanciones(playlist.getSongs().size());
+        playlistDto.setAssociatedSongs(playlist.getSongs().size());
         return Response.ok(playlistDto).build();
     }
 
@@ -165,7 +165,7 @@ public class PlaylistServiceImp implements IPlaylistService {
 
         // Mapear y devolver la respuesta
         PlaylistDTO playlistDto = modelMapper.map(playlist, PlaylistDTO.class);
-        playlistDto.setCantidadDeCanciones(playlist.getSongs().size());
+        playlistDto.setAssociatedSongs(playlist.getSongs().size());
         return Response.ok(modelMapper.map(playlistDto, PlaylistDTO.class)).build();
     }
     @Override

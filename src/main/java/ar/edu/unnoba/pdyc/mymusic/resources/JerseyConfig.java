@@ -13,5 +13,6 @@ public class JerseyConfig extends ResourceConfig {
     public JerseyConfig() {
         register(PlaylistResource.class);
         register(SongResource.class);
+        register(UserResource.class);
     }
 }

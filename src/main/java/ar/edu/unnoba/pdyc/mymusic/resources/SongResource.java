@@ -1,34 +1,24 @@
 package ar.edu.unnoba.pdyc.mymusic.resources;
 
 import ar.edu.unnoba.pdyc.mymusic.dto.SongDTO;
+import ar.edu.unnoba.pdyc.mymusic.repository.SongRepository;
 import ar.edu.unnoba.pdyc.mymusic.service.ISongService;
 import jakarta.ws.rs.*;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-
+import jakarta.ws.rs.core.*;
 import java.util.List;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
-import ar.edu.unnoba.pdyc.mymusic.model.Genre;
 import ar.edu.unnoba.pdyc.mymusic.model.Song;
 
 @Component
 @Path("/songs")
 public class SongResource {
+    private ISongService songService;
 
     @Autowired
-    private ISongService songService;
+    private SongRepository songRepository;
     private ModelMapper modelMapper = new ModelMapper();
 
     @GET
@@ -48,5 +38,18 @@ public class SongResource {
         Song song = modelMapper.map(songDto, Song.class);
         Song createdSong = songService.create(song);
         return  Response.ok(modelMapper.map(createdSong, SongDTO.class)).build();
+    }
+    @DELETE
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteSong(@PathParam("id") Long id) {
+        try {
+            songService.delete(id);
+            return Response.noContent().build();
+        } catch (NotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        } catch (IllegalStateException e) {
+            return Response.status(Response.Status.CONFLICT).entity("Cannot delete song because it is associated with one or more playlists.").build();
+        }
     }
 }

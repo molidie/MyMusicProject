@@ -5,13 +5,13 @@ public class PlaylistDTO {
 
     private Long id;
     private String name;
-    private int cantidadDeCanciones;
+    private int associatedSongs;
 
     public PlaylistDTO() {
     }
 
-    public PlaylistDTO(int cantidadDeCanciones, String name, Long id) {
-        this.cantidadDeCanciones = cantidadDeCanciones;
+    public PlaylistDTO(int associatedSongs, String name, Long id) {
+        this.associatedSongs = associatedSongs;
         this.name = name;
         this.id = id;
     }
@@ -32,12 +32,12 @@ public class PlaylistDTO {
         this.name = name;
     }
 
-    public int getCantidadDeCanciones() {
-        return cantidadDeCanciones;
+    public int getAssociatedSongs() {
+        return associatedSongs;
     }
 
-    public void setCantidadDeCanciones(int cantidadDeCanciones) {
-        this.cantidadDeCanciones = cantidadDeCanciones;
+    public void setAssociatedSongs(int associatedSongs) {
+        this.associatedSongs = associatedSongs;
     }
 
 }
