@@ -6,7 +6,8 @@ import ar.edu.unnoba.pdyc.mymusic.model.User;
 
 import java.util.List;
 
-public interface UserService {
+public interface IUserService {
+    public User createUser(User user);
     List<UserDTO> getAllUsers();
     UserDTO convertToDTO(User user);
 }

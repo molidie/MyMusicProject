@@ -1,8 +1,6 @@
 package ar.edu.unnoba.pdyc.mymusic.model;
 
 import jakarta.persistence.*;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Set;
 
 
@@ -18,7 +16,7 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER, targetEntity = RoleUser.class, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.EAGER, targetEntity = RoleUser.class, cascade = CascadeType.MERGE)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<RoleUser> roles;
 
@@ -40,6 +38,22 @@ public class User {
         this.id = id;
     }
 
+    public Set<RoleUser> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<RoleUser> roles) {
+        this.roles = roles;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -47,5 +61,4 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
-
 }
