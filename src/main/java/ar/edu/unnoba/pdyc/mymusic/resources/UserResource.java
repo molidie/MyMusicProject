@@ -1,34 +1,28 @@
 package ar.edu.unnoba.pdyc.mymusic.resources;
 
-import ar.edu.unnoba.pdyc.mymusic.dto.*;
-import ar.edu.unnoba.pdyc.mymusic.model.*;
-import ar.edu.unnoba.pdyc.mymusic.repository.*;
-import ar.edu.unnoba.pdyc.mymusic.service.*;
+import ar.edu.unnoba.pdyc.mymusic.dto.CreateUserDTO;
+import ar.edu.unnoba.pdyc.mymusic.dto.UserDTO;
+import ar.edu.unnoba.pdyc.mymusic.model.User;
+import ar.edu.unnoba.pdyc.mymusic.service.UserServiceImp;
 import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.modelmapper.ModelMapper;
-import java.util.*;
-import java.util.stream.Collectors;
+
+import java.util.List;
 
 @Component
 @Path("/users")
 public class UserResource {
 
-    private  UserServiceImp userService;
-    private final UserServiceImp userServiceImp;
-    private  ModelMapper modelMapper;
+    private UserServiceImp userService;
 
     @Autowired
-    private RoleUserRepository roleUserRepository;
-
-    @Autowired
-    public UserResource(UserServiceImp userService, UserServiceImp userServiceImp) {
+    public UserResource(UserServiceImp userService) {
         this.userService = userService;
-        this.userServiceImp = userServiceImp;
-        this.modelMapper = new ModelMapper();
     }
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllUsers() {
@@ -46,21 +40,22 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createUser(CreateUserDTO createUserDTO) {
-        User user = modelMapper.map(createUserDTO, User.class);
-        Set<RoleUser> roles = createUserDTO.getRoles().stream()
-                .map(roleName -> {
-                    ERole eRole = ERole.valueOf(roleName);
-                    Optional<RoleUser> optionalRoleUser = roleUserRepository.findByName(eRole);
-                    if (optionalRoleUser.isPresent()) {
-                        return optionalRoleUser.get();
-                    } else {
-                        throw new RuntimeException("El rol no existe: " + eRole);
-                    }
-                })
-                .collect(Collectors.toSet());
-        user.setRoles(roles);
-        userService.createUser(user);
-        return Response.status(Response.Status.CREATED)
-                .entity("{\"message\": \"User created successfully.\"}").build();
+        try {
+            userService.createUser(createUserDTO);
+            return Response.status(Response.Status.CREATED)
+                    .entity("{\"message\": \"User created successfully.\"}").build();
+        } catch (IllegalArgumentException ex) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("{\"error\": \"" + ex.getMessage() + "\"}").build();
+        } catch (RuntimeException ex) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("{\"error\": \"" + ex.getMessage() + "\"}").build();
+        }
+    }
+    @DELETE
+    @Path("/{userId}")
+    public Response deleteUser(@PathParam("userId") Long userId) {
+        userService.deleteUserById(userId);
+        return Response.ok().entity("{\"message\": \"User deleted successfully.\"}").build();
     }
 }
