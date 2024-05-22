@@ -3,6 +3,7 @@ package ar.edu.unnoba.pdyc.mymusic.resources;
 import ar.edu.unnoba.pdyc.mymusic.dto.SongDTO;
 import ar.edu.unnoba.pdyc.mymusic.repository.SongRepository;
 import ar.edu.unnoba.pdyc.mymusic.service.ISongService;
+import ar.edu.unnoba.pdyc.mymusic.service.SongServiceImp;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 import java.util.List;
@@ -15,10 +16,9 @@ import ar.edu.unnoba.pdyc.mymusic.model.Song;
 @Component
 @Path("/songs")
 public class SongResource {
-    private ISongService songService;
-
     @Autowired
-    private SongRepository songRepository;
+    private SongServiceImp songService;
+
     private ModelMapper modelMapper = new ModelMapper();
 
     @GET

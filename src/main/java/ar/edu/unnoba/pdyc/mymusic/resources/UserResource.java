@@ -8,6 +8,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -15,10 +16,9 @@ import java.util.List;
 @Component
 @Path("/users")
 public class UserResource {
-
+    @Autowired
     private UserServiceImp userService;
 
-    @Autowired
     public UserResource(UserServiceImp userService) {
         this.userService = userService;
     }

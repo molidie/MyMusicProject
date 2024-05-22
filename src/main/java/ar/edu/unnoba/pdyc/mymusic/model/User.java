@@ -1,12 +1,18 @@
 package ar.edu.unnoba.pdyc.mymusic.model;
 
 import jakarta.persistence.*;
+
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
+
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 
 @Entity
 @Table(name="users")
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -16,16 +22,12 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER, targetEntity = RoleUser.class, cascade = CascadeType.MERGE)
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<RoleUser> roles;
 
     public User() {
     }
 
-    public User(Long id, Set<RoleUser> roles, String password, String email) {
+    public User(Long id, String password, String email) {
         this.id = id;
-        this.roles = roles;
         this.password = password;
         this.email = email;
     }
@@ -38,17 +40,6 @@ public class User {
         this.id = id;
     }
 
-    public Set<RoleUser> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<RoleUser> roles) {
-        this.roles = roles;
-    }
-
-    public String getPassword() {
-        return password;
-    }
 
     public void setPassword(String password) {
         this.password = password;
@@ -61,4 +52,40 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
+    @Override
+    public Collection getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_SENSEI"));
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
+
+

@@ -14,7 +14,8 @@ public class Playlist {
     @ManyToMany
     @JoinTable(name = "playlists_songs")
     private List<Song> songs;
-    
+
+
     public Playlist(Long id, String name, List<Song> songs) {
         this.id = id;
         this.name = name;
@@ -47,5 +48,5 @@ public class Playlist {
     public void setSongs(List<Song> songs) {
         this.songs = songs;
     }
-    
+
 }
