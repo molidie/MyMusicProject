@@ -26,6 +26,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
+        setFilterProcessesUrl("/auth");  //We allow /auth for authentication
     }
 
     @Override
@@ -36,7 +37,6 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             AuthenticationRequestDTO auth = new ObjectMapper()
                     .readValue(request.getInputStream(), AuthenticationRequestDTO.class);
-            //  System.out.println(new BCryptPasswordEncoder().encode(auth.getPassword()));
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             auth.getEmail(),

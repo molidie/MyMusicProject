@@ -21,12 +21,14 @@ public class User implements UserDetails {
     private String email;
     @Column(nullable = false)
     private String password;
+    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
+    private List<Playlist> playlists;
 
 
     public User() {
     }
 
-    public User(Long id, String password, String email) {
+    public User(Long id, String password, String email){
         this.id = id;
         this.password = password;
         this.email = email;
@@ -52,6 +54,15 @@ public class User implements UserDetails {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public List<Playlist> getPlaylists() {
+        return playlists;
+    }
+
+    public void setPlaylists(List<Playlist> playlists) {
+        this.playlists = playlists;
+    }
+
     @Override
     public Collection getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_SENSEI"));

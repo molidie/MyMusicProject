@@ -6,6 +6,9 @@ import ar.edu.unnoba.pdyc.mymusic.service.SongServiceImp;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
@@ -43,10 +46,25 @@ public class PlaylistResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createPlaylist(@RequestBody PlaylistDTO playlistDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("{\"message\": \"The user is not authenticated.\"}")
+                    .build();
+        }
+        String creatorEmail = null;
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserDetails) {
+            creatorEmail = ((UserDetails) principal).getUsername();
+        } else {
+            creatorEmail = principal.toString();
+        }
         Playlist playlist = modelMapper.map(playlistDto, Playlist.class);
-        Playlist createdPlaylist = playlistService.create(playlist);
-        return Response.ok(modelMapper.map(createdPlaylist, PlaylistDTO.class)).build();
+        Playlist createdPlaylist = playlistService.create(playlist, creatorEmail);
+        PlaylistDTO createdPlaylistDto = modelMapper.map(createdPlaylist, PlaylistDTO.class);
+        return Response.ok(createdPlaylistDto).build();
     }
+
 
     @POST
     @Path("/{id}/songs")

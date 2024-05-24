@@ -11,13 +11,10 @@ public class Song {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column (name = "nombre")
     private String name;
 
-    @Column (name = "autor")
     private String author;
 
-    @Column (name = "genero")
     @Enumerated(EnumType.STRING)
     private Genre genre;
 

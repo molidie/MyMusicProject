@@ -6,14 +6,16 @@ public class PlaylistDTO {
     private Long id;
     private String name;
     private int associatedSongs;
+    private UserDTO creator;
 
     public PlaylistDTO() {
     }
 
-    public PlaylistDTO(int associatedSongs, String name, Long id) {
+    public PlaylistDTO(int associatedSongs, String name, Long id, UserDTO creator) {
         this.associatedSongs = associatedSongs;
         this.name = name;
         this.id = id;
+        this.creator = creator;
     }
 
     public Long getId() {
@@ -40,4 +42,11 @@ public class PlaylistDTO {
         this.associatedSongs = associatedSongs;
     }
 
+    public UserDTO getCreator() {
+        return creator;
+    }
+
+    public void setCreator(UserDTO creator) {
+        this.creator = creator;
+    }
 }

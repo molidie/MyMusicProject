@@ -1,5 +1,6 @@
 package ar.edu.unnoba.pdyc.mymusic.service;
 
+import ar.edu.unnoba.pdyc.mymusic.dto.PlaylistDTO;
 import jakarta.ws.rs.core.Response;
 import org.jvnet.hk2.annotations.Service;
 import java.util.List;
@@ -7,9 +8,7 @@ import ar.edu.unnoba.pdyc.mymusic.model.Playlist;
 
 @Service
 public interface  IPlaylistService {
-    public Playlist create (Playlist playlist);
-    public void delete (Long id);
-    public List<Playlist> findAll();
+    public Playlist create(Playlist playlist, String creatorEmail);
     Response getAllSongsByList(Long id);
     Response addSongToPlaylist(Long playlistId, Long songId);
     Response deleteSong(Long playlistId, Long songId);

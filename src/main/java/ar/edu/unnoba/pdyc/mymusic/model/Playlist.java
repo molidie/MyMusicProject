@@ -15,14 +15,19 @@ public class Playlist {
     @JoinTable(name = "playlists_songs")
     private List<Song> songs;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User creator;
 
-    public Playlist(Long id, String name, List<Song> songs) {
+
+    public Playlist() {
+    }
+
+    public Playlist(Long id, String name, List<Song> songs, User creator) {
         this.id = id;
         this.name = name;
         this.songs = songs;
-    }
-
-    public Playlist() {
+        this.creator = creator;
     }
 
     public Long getId() {
@@ -49,4 +54,11 @@ public class Playlist {
         this.songs = songs;
     }
 
+    public User getCreator() {
+        return creator;
+    }
+
+    public void setCreator(User creator) {
+        this.creator = creator;
+    }
 }
