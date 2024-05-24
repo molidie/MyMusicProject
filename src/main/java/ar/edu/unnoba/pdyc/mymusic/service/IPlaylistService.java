@@ -8,7 +8,7 @@ import ar.edu.unnoba.pdyc.mymusic.model.Playlist;
 
 @Service
 public interface  IPlaylistService {
-    public Playlist create(Playlist playlist, String creatorEmail);
+    public PlaylistDTO createPlaylist(PlaylistDTO playlistDto);
     Response getAllSongsByList(Long id);
     Response addSongToPlaylist(Long playlistId, Long songId);
     Response deleteSong(Long playlistId, Long songId);

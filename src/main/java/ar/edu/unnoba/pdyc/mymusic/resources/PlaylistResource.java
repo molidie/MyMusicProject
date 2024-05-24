@@ -46,23 +46,20 @@ public class PlaylistResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createPlaylist(@RequestBody PlaylistDTO playlistDto) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("{\"message\": \"The user is not authenticated.\"}")
-                    .build();
+        try {
+            PlaylistDTO createdPlaylistDto = playlistService.createPlaylist(playlistDto);
+            return Response.ok(createdPlaylistDto).build();
+        } catch (RuntimeException e) {
+            if (e.getMessage().equals("The user is not authenticated.")) {
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity("{\"message\": \"The user is not authenticated.\"}")
+                        .build();
+            } else {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("{\"message\": \"" + e.getMessage() + "\"}")
+                        .build();
+            }
         }
-        String creatorEmail = null;
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof UserDetails) {
-            creatorEmail = ((UserDetails) principal).getUsername();
-        } else {
-            creatorEmail = principal.toString();
-        }
-        Playlist playlist = modelMapper.map(playlistDto, Playlist.class);
-        Playlist createdPlaylist = playlistService.create(playlist, creatorEmail);
-        PlaylistDTO createdPlaylistDto = modelMapper.map(createdPlaylist, PlaylistDTO.class);
-        return Response.ok(createdPlaylistDto).build();
     }
 
 

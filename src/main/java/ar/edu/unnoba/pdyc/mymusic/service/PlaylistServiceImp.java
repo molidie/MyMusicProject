@@ -37,14 +37,31 @@ public class PlaylistServiceImp implements IPlaylistService {
     //CREATE PLAYSLISTS
 
     @Override
-    public Playlist create(Playlist playlist, String creatorEmail) {
+    public PlaylistDTO createPlaylist(PlaylistDTO playlistDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new RuntimeException("The user is not authenticated.");
+        }
+
+        String creatorEmail;
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserDetails) {
+            creatorEmail = ((UserDetails) principal).getUsername();
+        } else {
+            creatorEmail = principal.toString();
+        }
+
         User user = userRepository.findByEmail(creatorEmail);
         if (user == null) {
             throw new RuntimeException("The user with the email " + creatorEmail + " does not exist.");
         }
+
+        Playlist playlist = modelMapper.map(playlistDto, Playlist.class);
         playlist.setCreator(user);
-        return playlistRepository.save(playlist);
+        Playlist createdPlaylist = playlistRepository.save(playlist);
+        return modelMapper.map(createdPlaylist, PlaylistDTO.class);
     }
+
 
 
     //GET PLAYLISTS
