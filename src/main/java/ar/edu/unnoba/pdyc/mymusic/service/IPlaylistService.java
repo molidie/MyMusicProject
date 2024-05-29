@@ -15,6 +15,7 @@ public interface  IPlaylistService {
     Response updatePlaylistName(Long id, String newName);
     Response getPlaylists();
     Response deletePlaylist(Long id);
+    public Response getPlaylistsByUser();
 }
 
 

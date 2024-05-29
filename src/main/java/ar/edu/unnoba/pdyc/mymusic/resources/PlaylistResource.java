@@ -1,27 +1,22 @@
-
 package ar.edu.unnoba.pdyc.mymusic.resources;
-import ar.edu.unnoba.pdyc.mymusic.model.Playlist;
 import ar.edu.unnoba.pdyc.mymusic.repository.PlaylistRepository;
 import ar.edu.unnoba.pdyc.mymusic.service.SongServiceImp;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 import ar.edu.unnoba.pdyc.mymusic.dto.PlaylistDTO;
 import ar.edu.unnoba.pdyc.mymusic.service.PlaylistServiceImp;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import java.util.Map;
 
-
+@CrossOrigin ()
 @Component
 @Path("/playlists")
 public class PlaylistResource {
-
     private PlaylistServiceImp playlistService;
     private SongServiceImp songService;
     private ModelMapper modelMapper;
@@ -62,7 +57,6 @@ public class PlaylistResource {
         }
     }
 
-
     @POST
     @Path("/{id}/songs")
     @Produces(MediaType.APPLICATION_JSON)
@@ -99,5 +93,12 @@ public class PlaylistResource {
     @Path("/{id}")
     public Response deletePlaylist(@PathParam("id") Long id) {
         return playlistService.deletePlaylist(id);
+    }
+
+    @GET
+    @Path("/my")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPlaylistsByUser() {
+        return playlistService.getPlaylistsByUser();
     }
 }

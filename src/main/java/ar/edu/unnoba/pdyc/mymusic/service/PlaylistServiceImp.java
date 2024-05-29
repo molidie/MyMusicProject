@@ -7,7 +7,6 @@ import ar.edu.unnoba.pdyc.mymusic.dto.PlaylistDTO;
 import ar.edu.unnoba.pdyc.mymusic.dto.SongDTO;
 import ar.edu.unnoba.pdyc.mymusic.model.Song;
 import ar.edu.unnoba.pdyc.mymusic.model.User;
-import ar.edu.unnoba.pdyc.mymusic.repository.SongRepository;
 import ar.edu.unnoba.pdyc.mymusic.repository.UserRepository;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
@@ -174,7 +173,6 @@ public class PlaylistServiceImp implements IPlaylistService {
         }
         User creator = playlist.getCreator();
         if (creator == null || !authenticatedUserEmail.equals(creator.getEmail())) {
-            // Si el usuario no es el creador de la playlist, devolver un error de autorización
             return Response.status(Response.Status.FORBIDDEN)
                     .entity("Only the playlist creator can update its name.")
                     .build();
@@ -257,4 +255,46 @@ public class PlaylistServiceImp implements IPlaylistService {
         return Response.ok("The playlist with the ID " + id + " has been deleted.").build();
     }
 
+    //GET PLAYLISTS BY USERS
+
+    @Override
+    @Transactional(readOnly = true)
+    public Response getPlaylistsByUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("The user is not authenticated.")
+                    .build();
+        }
+        String authenticatedUserEmail = null;
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserDetails) {
+            authenticatedUserEmail = ((UserDetails) principal).getUsername();
+        } else {
+            authenticatedUserEmail = principal.toString();
+        }
+        User user = userRepository.findByEmail(authenticatedUserEmail);
+        if (user == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("User does not exist.")
+                    .build();
+        }
+        List<Playlist> playlists = playlistRepository.findByCreator(user);
+        List<PlaylistDTO> playlistDTOS = playlists.stream()
+                .map(playlist -> {
+                    PlaylistDTO playlistDTO = modelMapper.map(playlist, PlaylistDTO.class);
+                    int songSize = playlist.getSongs().size();
+                    playlistDTO.setAssociatedSongs(songSize);
+                    return playlistDTO;
+                })
+                .collect(Collectors.toList());
+        return Response.ok(playlistDTOS).build();
+    }
 }
+
+
+
+
+
+
+
