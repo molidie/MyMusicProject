@@ -106,7 +106,6 @@ public class PlaylistServiceImp implements IPlaylistService {
     @Override
     @Transactional
     public Response addSongToPlaylist(Long playlistId, Long songId) {
-        // Obtener el usuario autenticado
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return Response.status(Response.Status.UNAUTHORIZED)

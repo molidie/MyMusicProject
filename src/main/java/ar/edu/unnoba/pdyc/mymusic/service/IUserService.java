@@ -14,4 +14,5 @@ public interface IUserService  extends UserDetailsService {
     List<UserDTO> getAllUsers();
     boolean existsByEmail(String email);
     public void deleteUserById(Long userId);
+    public User getUserByEmail(String email);
 }

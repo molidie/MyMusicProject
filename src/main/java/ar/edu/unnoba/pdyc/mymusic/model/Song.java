@@ -18,7 +18,6 @@ public class Song {
     @Enumerated(EnumType.STRING)
     private Genre genre;
 
-    
     @ManyToMany(mappedBy = "songs")
     private List<Playlist> playlists;
 

@@ -4,11 +4,9 @@ import jakarta.persistence.*;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 
 @Entity
 @Table(name="users")
@@ -17,22 +15,23 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
+
+    @Column(nullable = false)
+    private String firstName;
+
+    @Column(nullable = false)
+    private String lastName;
+
     @Column(nullable = false)
     private String email;
+
     @Column(nullable = false)
     private String password;
+
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
     private List<Playlist> playlists;
 
-
-    public User() {
-    }
-
-    public User(Long id, String password, String email){
-        this.id = id;
-        this.password = password;
-        this.email = email;
-    }
+    // Getters and setters
 
     public Long getId() {
         return id;
@@ -42,9 +41,20 @@ public class User implements UserDetails {
         this.id = id;
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getEmail() {
@@ -53,6 +63,10 @@ public class User implements UserDetails {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public List<Playlist> getPlaylists() {
@@ -65,7 +79,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_SENSEI"));
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
@@ -98,5 +112,3 @@ public class User implements UserDetails {
         return true;
     }
 }
-
-

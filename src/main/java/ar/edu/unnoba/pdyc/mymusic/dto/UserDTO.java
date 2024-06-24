@@ -5,13 +5,25 @@ import java.util.List;
 public class UserDTO {
     private int id;
     private String email;
+    private String firstname;
+    private String lastname;
 
     public UserDTO() {
     }
 
-    public UserDTO(int id, String email) {
-        this.id = id;
+    public UserDTO(String email, int id, String firstname, String lastname) {
         this.email = email;
+        this.id = id;
+        this.firstname = firstname;
+        this.lastname = lastname;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getEmail() {
@@ -22,11 +34,19 @@ public class UserDTO {
         this.email = email;
     }
 
-    public int getId() {
-        return id;
+    public String getFirstname() {
+        return firstname;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setFirstname(String name) {
+        this.firstname = name;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 }

@@ -17,6 +17,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static ar.edu.unnoba.pdyc.mymusic.security.SecurityConstants.*;
 
@@ -47,16 +49,38 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             throw new RuntimeException(e);
         }
     }
-
     @Override
     protected void successfulAuthentication(HttpServletRequest request,
                                             HttpServletResponse response,
                                             FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
+
+        User user = (User) authResult.getPrincipal();
+
+        // Crea el token JWT con información adicional del usuario
         String token = JWT.create()
-                .withSubject(((User) authResult.getPrincipal()).getEmail())
+                .withSubject(user.getEmail())
+                .withClaim("userId", user.getId())  // Agrega el ID del usuario al token
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(Algorithm.HMAC512(SECRET.getBytes()));
+
+        // Agrega el token JWT como un encabezado en la respuesta
         response.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
+
+
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("id", user.getId());
+        responseBody.put("name",user.getFirstName());
+        responseBody.put("lastName",user.getLastName());
+        responseBody.put("email", user.getEmail());
+        responseBody.put("token", token);
+
+        // Agrega el token y la información del usuario a la respuesta
+        ObjectMapper objectMapper = new ObjectMapper();
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        objectMapper.writeValue(response.getWriter(), responseBody);
     }
+
+
 }

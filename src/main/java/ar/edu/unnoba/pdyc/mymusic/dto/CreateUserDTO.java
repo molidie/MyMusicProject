@@ -1,25 +1,27 @@
 package ar.edu.unnoba.pdyc.mymusic.dto;
 
 public class CreateUserDTO {
-    private Long id;
+    private String firstName;
+    private String lastName;
     private String email;
     private String password;
 
-    public CreateUserDTO() {
+    // Getters and setters
+
+    public String getFirstName() {
+        return firstName;
     }
 
-    public CreateUserDTO(Long id ,String password, String email) {
-        this.id = id;
-        this.password = password;
-        this.email = email;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public Long getId() {
-        return id;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getEmail() {

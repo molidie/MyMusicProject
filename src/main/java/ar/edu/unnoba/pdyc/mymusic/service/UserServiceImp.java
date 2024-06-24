@@ -65,4 +65,13 @@ public class UserServiceImp implements IUserService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findFirstByEmail(username);
     }
+
+
+    public User getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+        if(user != null) {
+            user.getPlaylists().size();
+        }
+        return user;
+    }
 }
