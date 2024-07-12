@@ -1,5 +1,6 @@
 package ar.edu.unnoba.pdyc.mymusic.dto;
 
+import java.util.List;
 
 public class PlaylistDTO {
 
@@ -7,6 +8,7 @@ public class PlaylistDTO {
     private String name;
     private int associatedSongs;
     private UserDTO creator;
+    private List<SongDTO> songs; // Agregar esta línea para almacenar las canciones
 
     public PlaylistDTO() {
     }
@@ -48,5 +50,13 @@ public class PlaylistDTO {
 
     public void setCreator(UserDTO creator) {
         this.creator = creator;
+    }
+
+    public List<SongDTO> getSongs() {
+        return songs;
+    }
+
+    public void setSongs(List<SongDTO> songs) {
+        this.songs = songs;
     }
 }

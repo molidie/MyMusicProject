@@ -90,16 +90,15 @@ public class PlaylistServiceImp implements IPlaylistService {
                     .entity("The playlist with the ID " + id + " does not exist.")
                     .build();
         }
-        List<SongDTO> songs = playlist.getSongs().stream()
-                .map(song -> modelMapper.map(song, SongDTO.class))
-                .collect(Collectors.toList());
-        if (songs.isEmpty()) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("The playlist with the ID  " + id + " is empty.")
+        PlaylistDTO playlistDTO = modelMapper.map(playlist, PlaylistDTO.class);
+        if (playlistDTO.getSongs().isEmpty()) {
+            return Response.status(Response.Status.OK)
+                    .entity(playlistDTO)
                     .build();
         }
-        return Response.ok(songs).build();
+        return Response.ok(playlistDTO).build();
     }
+
 
     //ADD SONG TO PLAYLISTS
 
